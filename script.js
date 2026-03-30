@@ -80,6 +80,7 @@ class SchulteModule {
                   <path d="M9 2h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                 </svg>
               </span>
+              <span class="timer-stop" aria-hidden="true">停止计时</span>
             </button>
             <div class="hint">
               <div>点击计时器开始（计时器会隐藏）</div>
@@ -143,6 +144,7 @@ class SchulteModule {
     this.elapsedMs = 0;
     this.timerTextEl.textContent = "00:00:00";
     this.timerEl.classList.add("is-hidden");
+    this.timerEl.setAttribute("aria-label", "点击停止计时");
     this.startPerf = performance.now();
     this.rafId = requestAnimationFrame(this.tick);
   }
@@ -155,10 +157,13 @@ class SchulteModule {
     this.elapsedMs = performance.now() - this.startPerf;
     this.timerTextEl.textContent = formatTime(this.elapsedMs);
     this.timerEl.classList.remove("is-hidden");
+    this.timerEl.setAttribute("aria-label", "点击开始计时");
   }
 
   onTimerClick() {
-    this.startTimer();
+    // 兼容移动端：开始后允许再次点击/触摸同一区域立即停止
+    if (this.running) this.stopTimer();
+    else this.startTimer();
   }
 
   onKeydown(e) {
