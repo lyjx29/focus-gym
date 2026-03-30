@@ -51,10 +51,13 @@ class SchulteModule {
     this.rafId = 0;
     this.elapsedMs = 0;
 
+    this.lastTouchTs = 0;
+
     // 需求写的是 黑/红/蓝；暗色主题下“黑”会看不见，这里用白色作为可视替代
     this.colorPool = ["#ffffff", "#ff5252", "#4dabff"]; // 白(黑的可视替代)、红、蓝
 
     this.onTimerClick = this.onTimerClick.bind(this);
+    this.onTimerTouchStart = this.onTimerTouchStart.bind(this);
     this.onKeydown = this.onKeydown.bind(this);
     this.tick = this.tick.bind(this);
   }
@@ -100,6 +103,7 @@ class SchulteModule {
     this.timerTextEl = this.rootEl.querySelector("#timerText");
 
     this.timerEl.addEventListener("click", this.onTimerClick);
+    this.timerEl.addEventListener("touchstart", this.onTimerTouchStart, { passive: false });
     window.addEventListener("keydown", this.onKeydown);
 
     this.renderGrid();
@@ -108,6 +112,7 @@ class SchulteModule {
   unmount() {
     this.stopTimer();
     if (this.timerEl) this.timerEl.removeEventListener("click", this.onTimerClick);
+    if (this.timerEl) this.timerEl.removeEventListener("touchstart", this.onTimerTouchStart);
     window.removeEventListener("keydown", this.onKeydown);
     this.rootEl.innerHTML = "";
   }
@@ -161,7 +166,21 @@ class SchulteModule {
   }
 
   onTimerClick() {
+    // iOS/部分安卓浏览器：touchstart 后通常还会触发 click
+    // 这里做一个时间窗口过滤，避免一次触摸导致“开始后又立刻停止”
+    if (this.lastTouchTs && Date.now() - this.lastTouchTs < 700) return;
     // 兼容移动端：开始后允许再次点击/触摸同一区域立即停止
+    if (this.running) this.stopTimer();
+    else this.startTimer();
+  }
+
+  onTimerTouchStart(e) {
+    // 触摸场景优先用 touchstart 处理：
+    // - preventDefault() 用于抑制后续 click/双击缩放等干扰
+    // - passive 必须为 false，否则 iOS 上 preventDefault 无效
+    e.preventDefault();
+    this.lastTouchTs = Date.now();
+
     if (this.running) this.stopTimer();
     else this.startTimer();
   }
@@ -328,7 +347,7 @@ class NBackModule {
         <div class="module-header">
           <div>
             <div class="module-title">N-Back 训练 (默认 2-Back)</div>
-            <div class="module-subtitle">当 当前字母与前 2 个字母中有一个相同的，点击“匹配”或按 M</div>
+            <div class="module-subtitle">当当前字母与前 2 个相同，点击“匹配”或按 M</div>
           </div>
           <div class="progress" id="nbackProgress">0/${this.total}</div>
         </div>
