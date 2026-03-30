@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>专注力训练平台</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="layout" aria-label="专注力训练平台">
+      <aside class="sidebar" aria-label="训练模块导航">
+        <div class="brand">专注力训练</div>
+        <nav class="nav" aria-label="模块列表">
+          <button class="nav-item is-active" type="button" data-tab="schulte">舒尔特方格</button>
+          <button class="nav-item" type="button" data-tab="stroop">斯特鲁普测试 (Stroop)</button>
+          <button class="nav-item" type="button" data-tab="nback">N-Back 训练</button>
+        </nav>
+      </aside>
+
+      <section class="main" aria-label="主内容区">
+        <div id="app" class="app" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
