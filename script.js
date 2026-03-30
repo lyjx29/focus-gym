@@ -328,7 +328,7 @@ class NBackModule {
         <div class="module-header">
           <div>
             <div class="module-title">N-Back 训练 (默认 2-Back)</div>
-            <div class="module-subtitle">当当前字母与前 2 个相同，点击“匹配”或按 M</div>
+            <div class="module-subtitle">当 当前字母与前 2 个字母中有一个相同的，点击“匹配”或按 M</div>
           </div>
           <div class="progress" id="nbackProgress">0/${this.total}</div>
         </div>
